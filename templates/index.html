@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="style.css">
+    <title>ASCII-Art Web</title>
+</head>
+
+<body>
+    <div class="grid-container">
+        <div class="grid-item"></div>
+        <div class="grid-item" style="font-size:400%;">ASCII-ART WEB</div>
+        <div class="grid-item"></div>
+        <div class="grid-item"></div>
+        <div class="grid-item">
+            <form method="POST" action="/ascii-art">
+                <label for="inputarea">Please provide input here:</label><br><br>
+                <textarea id="inputarea" name="input" rows="25" cols="125" wrap="off"></textarea><br><br>
+
+                <label for="bannerChoice">Choose the style:</label>
+                <select name="banner" id="bannerChoice">
+                    <option value="standard" selected>Standard</option>
+                    <option value="shadow">Shadow</option>
+                    <option value="thinkertoy">Thinkertoy</option>
+                </select>
+
+                <input type="submit" value="Submit"><br><br>
+            </form>
+
+            <form action="/" method="POST">
+                <button type="submit">Main Page</button>
+            </form>
+            <br><br>
+            <label>Output:</label><br><br>
+            <pre><fieldset>{{.OutputTxt}}</fieldset></pre>
+        </div>
+        <div class="grid-item"></div>
+        <div class="grid-item"></div>
+        <div class="grid-item"></div>
+        <div class="grid-item"></div>
+    </div>
+
+</body>
+
+</html>
