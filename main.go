@@ -11,6 +11,7 @@ func main() {
 
 	http.HandleFunc("/", functions.IndexHandler)
 	http.HandleFunc("/ascii-art", functions.AsciiArtHandler)
+	http.HandleFunc("/ascii-art/output.txt", functions.DownloadHandler)
 	http.HandleFunc("/style.css", functions.ServeCss)
 	fmt.Println("Server is running on http://localhost:8080/...")
 	http.ListenAndServe(":8080", nil)

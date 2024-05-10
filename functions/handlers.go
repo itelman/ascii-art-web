@@ -1,14 +1,22 @@
 package functions
 
 import (
+	"bytes"
 	"net/http"
+	"strconv"
 	"strings"
 	"text/template"
+	"time"
 )
 
 type PageVariables struct {
-	InputTxt  string
-	OutputTxt string
+	InputTxt, OutputTxt string
+}
+
+type Error struct {
+	Code    int
+	Name    string
+	Content string
 }
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
@@ -30,9 +38,40 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func DownloadHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/ascii-art/output.txt" {
+		ErrorPageHandler(w, http.StatusNotFound)
+		return
+	}
+
+	if r.Method != http.MethodPost {
+		ErrorPageHandler(w, http.StatusMethodNotAllowed)
+		return
+	}
+
+	res := r.FormValue("res")
+
+	if len(res) == 0 {
+		ErrorPageHandler(w, http.StatusBadRequest)
+		return
+	}
+
+	w.Header().Set("Content-Disposition", "attachment; filename=output.txt")
+	w.Header().Set("Content-Length", strconv.Itoa(len(res)))
+	w.Header().Set("Content-Type", "text/plain")
+
+	http.ServeContent(w, r, "output.txt", time.Now(), bytes.NewReader([]byte(res)))
+	return
+}
+
 func AsciiArtHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/ascii-art" {
 		ErrorPageHandler(w, http.StatusNotFound)
+		return
+	}
+
+	if r.Method != http.MethodPost {
+		ErrorPageHandler(w, http.StatusMethodNotAllowed)
 		return
 	}
 
@@ -56,20 +95,15 @@ func AsciiArtHandler(w http.ResponseWriter, r *http.Request) {
 
 	res, isValid := GetAscii(inputTxt, asciiArtMap)
 	if !isValid {
-		ErrorPageHandler(w, http.StatusBadRequest)
-		return
-	}
-
-	mainTmpl, err := template.ParseFiles("templates/index.html")
-	if err != nil {
-		ErrorPageHandler(w, http.StatusNotFound)
+		ErrorPageHandler(w, http.StatusInternalServerError)
 		return
 	}
 
 	info := PageVariables{inputTxt, res}
 
-	if r.Method != "POST" {
-		ErrorPageHandler(w, http.StatusMethodNotAllowed)
+	mainTmpl, err := template.ParseFiles("templates/index.html")
+	if err != nil {
+		ErrorPageHandler(w, http.StatusNotFound)
 		return
 	}
 
@@ -81,15 +115,21 @@ func AsciiArtHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func ErrorPageHandler(w http.ResponseWriter, statCode int) {
-	pages := map[int]string{
-		http.StatusBadRequest:          "templates/HTTP400.html",
-		http.StatusNotFound:            "templates/HTTP404.html",
-		http.StatusInternalServerError: "templates/HTTP500.html",
-		http.StatusMethodNotAllowed:    "templates/HTTP405.html",
+	errors := map[int]Error{
+		http.StatusBadRequest:          {http.StatusBadRequest, "Bad Request", "The server cannot process the request due to something that is perceived to be a client error."},
+		http.StatusNotFound:            {http.StatusNotFound, "Resource not found", "The requested resource could not be found but may be available again in the future."},
+		http.StatusMethodNotAllowed:    {http.StatusMethodNotAllowed, "Method Not Allowed", "A request method is not supported for the requested resource."},
+		http.StatusInternalServerError: {http.StatusInternalServerError, "Webservice currently unavailable", "An unexpected condition was encountered.<br />Our service team has been dispatched to bring it back online."},
 	}
 
-	w.WriteHeader(statCode)
-	template.Must(template.ParseFiles(pages[statCode])).Execute(w, nil)
+	errTmpl, err := template.ParseFiles("templates/error.html")
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	} else {
+		w.WriteHeader(statCode)
+		errTmpl.Execute(w, errors[statCode])
+	}
 }
 
 func ServeCss(w http.ResponseWriter, r *http.Request) {

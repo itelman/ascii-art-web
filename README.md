@@ -1,10 +1,10 @@
 ## ascii-art-web
 
-### Authors:
+## Authors:
 
-Arshat Aitkozha (@araitkozha), Ilyas Telman (@itelman).
+Ilyas Telman (@itelman), Arshat Aitkozha (@araitkozha).
 
-### Description/Implementation details: algorithm
+## Description/Implementation details: algorithm
 
 Ascii-art-web consists in creating and running a server, in which it will be possible to use a web **GUI** (graphical user interface) version of [ascii-art](../ascii-art) project.
 
@@ -34,6 +34,22 @@ The website also returns the following HTTP status codes:
 - Bad Request (400), for requests with invalid text input.
 - Method Not Allowed (405), for unsupported requests (GET requests, invalid request values, etc.).
 - Internal Server Error (500), for unhandled errors.
+
+### Output Download/Export in a File
+
+In addition, the project consists on making sure that it is possible to export the output of the web application in `.txt` format. The file is exported with the right permissions (**read and write**) for the user.
+
+In order to send a file as part of the HTTP response, the use of [HTTP headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers) was included.
+
+Headers used for file transfer are [Content-Type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type), [Content-Length](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Length) and [Content-Disposition](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition).
+
+### Dockerfile
+
+- For this project the following were created:
+
+    - one Dockerfile
+    - one image
+    - one container
 
 ## Usage: how to run
 

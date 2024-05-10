@@ -1,21 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
     <title>ASCII-Art Web</title>
 </head>
 
 <body>
-    <div class="grid-container">
-        <div class="grid-item"></div>
-        <div class="grid-item" style="font-size:400%;">ASCII-ART WEB</div>
-        <div class="grid-item"></div>
-        <div class="grid-item"></div>
-        <div class="grid-item">
+    <div class="container">
+        <header>
+            <h1>ASCII-ART WEB</h1>
+        </header>
+
+        <main>
             <form method="POST" action="/ascii-art">
-                <label for="inputarea">Please provide input here:</label><br><br>
-                <textarea id="inputarea" name="input" rows="25" cols="125" wrap="off"></textarea><br><br>
+                <label for="inputarea">Please provide input here:</label><br>
+                <textarea id="inputarea" name="input" rows="10" cols="40" wrap="off" required></textarea><br>
 
                 <label for="bannerChoice">Choose the style:</label>
                 <select name="banner" id="bannerChoice">
@@ -24,22 +26,27 @@
                     <option value="thinkertoy">Thinkertoy</option>
                 </select>
 
-                <input type="submit" value="Submit"><br><br>
+                <input type="submit" value="Submit">
             </form>
 
-            <form action="/" method="POST">
+            {{if .InputTxt}}
+            <form action="/ascii-art/output.txt" method="POST">
+                <input type=hidden name="res" value="{{.OutputTxt}}">
+
+                <button type="submit">Download</button>
+            </form>
+            {{end}}
+
+            <div class="output">
+                <label>Output:</label><br>
+                <pre><fieldset>{{.OutputTxt}}</fieldset></pre>
+            </div>
+
+            <form class="secondForm" action="/" method="POST">
                 <button type="submit">Main Page</button>
             </form>
-            <br><br>
-            <label>Output:</label><br><br>
-            <pre><fieldset>{{.OutputTxt}}</fieldset></pre>
-        </div>
-        <div class="grid-item"></div>
-        <div class="grid-item"></div>
-        <div class="grid-item"></div>
-        <div class="grid-item"></div>
+        </main>
     </div>
-
 </body>
 
 </html>
