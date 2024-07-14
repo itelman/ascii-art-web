@@ -54,9 +54,7 @@ Headers used for file transfer are [Content-Type](https://developer.mozilla.org/
 ## Usage: how to run
 
 - You can view the app at:
-```console
 https://asciiartweb1-ezklqen9.b4a.run/
-```
 
 Or
 
